@@ -45,3 +45,27 @@ button:active {
   border-radius: 0 3px 3px 0;
   border-left: 1px solid rgba(0,0,0,.5);
 }
+line {
+  stroke: darkolivegreen;
+  stroke-width: 14;
+  opacity: 0.3;
+}
+rect, g {
+  fill: #2d2d2d;
+  stroke: white;
+  stroke-width: 3;
+  animation-name: pulse;
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+@keyframes pulse {
+  from { stroke: pink; }
+  25% { stroke: purple; }
+  50% { stroke: white; }
+  75% { stroke: yellow; }
+  to { stroke: indianred; }
+}
