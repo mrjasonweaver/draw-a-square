@@ -50,8 +50,8 @@ line {
   stroke-width: 14;
   opacity: 0.3;
 }
-rect, g {
-  fill: #2d2d2d;
+rect {
+  fill: rgba(0,0,0,.1);
   stroke: white;
   stroke-width: 3;
   animation-name: pulse;

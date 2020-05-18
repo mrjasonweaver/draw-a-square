@@ -17,7 +17,6 @@ interface SquaresState {
   dragging: boolean;
   startPoint: Coordinates;
   endPoint: Coordinates;
-  gapValue: number;
   dragType: string;
   squareCount: number;
 }
@@ -38,7 +37,6 @@ let currentSquaresState: SquaresState = {
   dragging: false,
   startPoint: { x: 0, y: 0 },
   endPoint: { x: 0, y: 0 },
-  gapValue: 0,
   dragType: '',
   squareCount: 0
 };
@@ -60,7 +58,6 @@ const getState = (state: SquaresState): SquaresState => {
     },
     startPoint: { x: state.startPoint.x, y: state.startPoint.y },
     endPoint: { x: state.endPoint.x, y: state.endPoint.y },
-    gapValue: state.gapValue,
     dragType: state.dragType,
     squareCount: state.squareCount
   };
@@ -70,10 +67,8 @@ const getState = (state: SquaresState): SquaresState => {
 const renderUi = (state: SquaresState): void => {
   let square;
   let currentSquare;
-  let diagonal;
   const squareSelector = `square-${state.squareCount}`;
   if (state.dragging === true) {
-    diagonal = Math.sqrt((state.gapValue * state.gapValue) + (state.gapValue * state.gapValue));
     if (state.dragType === 'start') {
       square = document.createElementNS("http://www.w3.org/2000/svg", "rect");
       square.setAttribute('id', squareSelector);
@@ -82,8 +77,8 @@ const renderUi = (state: SquaresState): void => {
       main.appendChild(square);
     } else if (state.dragType === 'drag') {
       currentSquare = document.querySelector(`#${squareSelector}`);
-      currentSquare.setAttribute('width', diagonal);
-      currentSquare.setAttribute('height', diagonal);
+      currentSquare.setAttribute('width', state.coordinates.x - state.startPoint.x);
+      currentSquare.setAttribute('height', state.coordinates.y - state.startPoint.y);
     }
   } else {
     countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
@@ -154,10 +149,6 @@ const gatherEventStream = (): void => {
         ...currentSquaresState,
         dragging: true,
         startPoint: { x: state.clientX, y: state.clientY },
-        gapValue: Math.hypot(
-          state.clientX-currentSquaresState.startPoint.x,
-          state.clientY-currentSquaresState.startPoint.y
-        ),
         dragType: state.type
       });
     } else if (state.type === 'cancel') {
@@ -165,10 +156,6 @@ const gatherEventStream = (): void => {
         ...currentSquaresState,
         dragging: false,
         endPoint: { x: state.clientX, y: state.clientY },
-        gapValue: Math.hypot(
-          state.clientX-currentSquaresState.startPoint.x,
-          state.clientY-currentSquaresState.startPoint.y
-        ),
         dragType: state.type,
         squareCount: currentSquaresState.squareCount + 1
       });
@@ -176,10 +163,6 @@ const gatherEventStream = (): void => {
       setState({
         ...currentSquaresState,
         coordinates: { x: state.clientX, y: state.clientY },
-        gapValue: Math.hypot(
-          state.clientX-currentSquaresState.startPoint.x,
-          state.clientY-currentSquaresState.startPoint.y
-        ),
         dragType: state.type
       });
     }
