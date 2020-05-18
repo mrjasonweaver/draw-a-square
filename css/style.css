@@ -1,0 +1,47 @@
+* { box-sizing: border-box; }
+body { background: #2d2d2d; }
+svg { 
+  position: fixed;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+drawControls {
+  position: fixed;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  top: 0;
+  right: 0;
+  background: rgba(0,0,0,.5);
+  width: 100%;
+  height: 60px;
+  color: white;
+  font-family: 'Roboto', sans-serif;
+}
+count {
+  width: 100px;
+}
+button {
+  padding: 8px 16px;
+  border: none;
+  background: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 3px 0 0 3px;
+  outline: 0;
+}
+button:hover {
+  cursor: pointer;
+  background: rgba(255,255,255,0.9);
+}
+button:active {
+  transform: scale(.97);
+  background: rgba(255,255,255,0.8);
+}
+#clear {
+  border-radius: 0 3px 3px 0;
+  border-left: 1px solid rgba(0,0,0,.5);
+}
