@@ -1,0 +1,17 @@
+{
+  "name": "draw-a-square",
+  "version": "1.0.0",
+  "description": "Draw a square using TypeScript, RxJS, and svg",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^3.9.2"
+  },
+  "dependencies": {
+    "rxjs": "^6.5.5"
+  }
+}
