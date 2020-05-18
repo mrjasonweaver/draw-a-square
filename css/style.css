@@ -51,8 +51,8 @@ line {
   opacity: 0.3;
 }
 rect {
-  fill: rgba(0,0,0,.1);
-  stroke: white;
+  fill: transparent;
+  stroke: black;
   stroke-width: 3;
   animation-name: pulse;
   animation-duration: 5s;

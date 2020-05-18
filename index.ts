@@ -68,6 +68,8 @@ const renderUi = (state: SquaresState): void => {
   let square;
   let currentSquare;
   const squareSelector = `square-${state.squareCount}`;
+  const dragLeft = state.startPoint.x > state.coordinates.x;
+  const dragUp = state.startPoint.y > state.coordinates.y;
   if (state.dragging === true) {
     if (state.dragType === 'start') {
       square = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -77,8 +79,26 @@ const renderUi = (state: SquaresState): void => {
       main.appendChild(square);
     } else if (state.dragType === 'drag') {
       currentSquare = document.querySelector(`#${squareSelector}`);
-      currentSquare.setAttribute('width', state.coordinates.x - state.startPoint.x);
-      currentSquare.setAttribute('height', state.coordinates.y - state.startPoint.y);
+      if (!dragUp && !dragLeft) {
+        currentSquare.setAttribute('width', state.coordinates.x - state.startPoint.x);
+        currentSquare.setAttribute('height', state.coordinates.y - state.startPoint.y);
+      }
+      if (dragUp && dragLeft) {
+        currentSquare.setAttribute('x', state.coordinates.x);
+        currentSquare.setAttribute('y', state.coordinates.y);
+        currentSquare.setAttribute('width', state.startPoint.x - state.coordinates.x);
+        currentSquare.setAttribute('height', state.startPoint.y - state.coordinates.y);     
+      }
+      if (!dragUp && dragLeft) {
+        currentSquare.setAttribute('x', state.coordinates.x);
+        currentSquare.setAttribute('width', state.startPoint.x - state.coordinates.x);
+        currentSquare.setAttribute('height', state.coordinates.y - state.startPoint.y); 
+      } 
+      if (dragUp && !dragLeft) {
+        currentSquare.setAttribute('y', state.coordinates.y);
+        currentSquare.setAttribute('width', state.coordinates.x - state.startPoint.x);
+        currentSquare.setAttribute('height', state.startPoint.y - state.coordinates.y);       
+      }
     }
   } else {
     countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
@@ -111,21 +131,21 @@ const undo$ = fromEvent(undoButton, "click");
 // In this section we are capturing mouse events, making
 // observables, and transforming data stream emissions
 // into our defined interface using the rxjs map operator 🤘
-const mouseDown$: Observable<MouseEvent> = fromEvent(main, "mousedown").pipe(
+const mouseDown$: Observable<any> = fromEvent(main, "mousedown").pipe(
   map((e: MouseEvent) => ({
     clientX: e.clientX,
     clientY: e.clientY,
     type: "start"
   }))
 );
-const mouseMove$: Observable<MouseEvent> = fromEvent(main, "mousemove").pipe(
+const mouseMove$: Observable<any> = fromEvent(main, "mousemove").pipe(
   map((e: MouseEvent) => ({
     clientX: e.clientX,
     clientY: e.clientY,
     type: "drag"
   }))
 );
-const mouseUp$: Observable<MouseEvent> = fromEvent(main, "mouseup").pipe(
+const mouseUp$: Observable<any> = fromEvent(main, "mouseup").pipe(
   map((e: MouseEvent) => ({
     clientX: e.clientX,
     clientY: e.clientY,
