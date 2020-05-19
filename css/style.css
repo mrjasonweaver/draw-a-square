@@ -46,8 +46,14 @@ button:active {
   border-radius: 0 3px 3px 0;
   border-left: 1px solid rgba(0,0,0,.5);
 }
-rect {
+rect, g {
   fill: transparent;
   stroke: black;
   stroke-width: 1;
+}
+text {
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
+  fill: lightblue;
+  stroke: transparent;
 }

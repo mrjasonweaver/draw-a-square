@@ -65,41 +65,63 @@ const getState = (state: SquaresState): SquaresState => {
 // Setting initial counter
 countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
 
-// All things adding to the DOM
+// Drawing to the DOM
 const renderUi = (state: SquaresState): void => {
-  let square;
-  let currentSquare;
+  let boundingBox: SVGGElement;
+  let square: SVGRectElement;
+  let currentSquare: SVGRectElement;
+  let textNodeWidth: SVGTextElement;
+  let currentTextNodeWidth;
+  let textNodeWidthContent;
+  const boundingBoxSelector = `boundingBox-${state.squareCount + 1}`;
   const squareSelector = `square-${state.squareCount + 1}`;
+  const textNodeWidthSelector = `text-width-${state.squareCount + 1}`;
   const dragLeft = state.startPoint.x > state.coordinates.x;
   const dragUp = state.startPoint.y > state.coordinates.y;
   if (state.dragging) {
     if (state.dragType === 'start') {
+      boundingBox = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      boundingBox.setAttribute('id', boundingBoxSelector);
+      boundingBox.setAttribute('x', state.coordinates.x.toString());
+      boundingBox.setAttribute('y', state.coordinates.y.toString());
       square = document.createElementNS("http://www.w3.org/2000/svg", "rect");
       square.setAttribute('id', squareSelector);
-      square.setAttribute('x', state.coordinates.x);
-      square.setAttribute('y', state.coordinates.y);
-      main.appendChild(square);
+      square.setAttribute('x', state.coordinates.x.toString());
+      square.setAttribute('y', state.coordinates.y.toString());
+      textNodeWidth = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      textNodeWidth.setAttribute('id', textNodeWidthSelector);
+      textNodeWidth.setAttribute('x', state.coordinates.x.toString());
+      textNodeWidth.setAttribute('y', state.coordinates.y.toString());
+      textNodeWidthContent = document.createTextNode('width');
+      textNodeWidth.appendChild(textNodeWidthContent);
+      boundingBox.appendChild(textNodeWidth);
+      boundingBox.appendChild(square);
+      boundingBox.appendChild(textNodeWidth);
+      main.appendChild(boundingBox);
     } else if (state.dragType === 'drag') {
       currentSquare = document.querySelector(`#${squareSelector}`);
+      currentTextNodeWidth = document.querySelector(`#${textNodeWidthSelector}`);
       if (!dragUp && !dragLeft) {
-        currentSquare.setAttribute('width', state.coordinates.x - state.startPoint.x);
-        currentSquare.setAttribute('height', state.coordinates.y - state.startPoint.y);
+        currentSquare.setAttribute('width', (state.coordinates.x - state.startPoint.x).toString());
+        currentSquare.setAttribute('height', (state.coordinates.y - state.startPoint.y).toString());
+        currentTextNodeWidth.setAttribute('x', state.coordinates.x.toString());
+        // currentTextNodeWidth.setAttribute('x', (state.coordinates.x - state.startPoint.x).toString());
       }
       if (dragUp && dragLeft) {
-        currentSquare.setAttribute('x', state.coordinates.x);
-        currentSquare.setAttribute('y', state.coordinates.y);
-        currentSquare.setAttribute('width', state.startPoint.x - state.coordinates.x);
-        currentSquare.setAttribute('height', state.startPoint.y - state.coordinates.y);     
+        currentSquare.setAttribute('x', state.coordinates.x.toString());
+        currentSquare.setAttribute('y', state.coordinates.y.toString());
+        currentSquare.setAttribute('width', (state.startPoint.x - state.coordinates.x).toString());
+        currentSquare.setAttribute('height', (state.startPoint.y - state.coordinates.y).toString());     
       }
       if (!dragUp && dragLeft) {
-        currentSquare.setAttribute('x', state.coordinates.x);
-        currentSquare.setAttribute('width', state.startPoint.x - state.coordinates.x);
-        currentSquare.setAttribute('height', state.coordinates.y - state.startPoint.y); 
+        currentSquare.setAttribute('x', state.coordinates.x.toString());
+        currentSquare.setAttribute('width', (state.startPoint.x - state.coordinates.x).toString());
+        currentSquare.setAttribute('height', (state.coordinates.y - state.startPoint.y).toString()); 
       } 
       if (dragUp && !dragLeft) {
-        currentSquare.setAttribute('y', state.coordinates.y);
-        currentSquare.setAttribute('width', state.coordinates.x - state.startPoint.x);
-        currentSquare.setAttribute('height', state.startPoint.y - state.coordinates.y);       
+        currentSquare.setAttribute('y', state.coordinates.y.toString());
+        currentSquare.setAttribute('width', (state.coordinates.x - state.startPoint.x).toString());
+        currentSquare.setAttribute('height', (state.startPoint.y - state.coordinates.y).toString());       
       }
     }
   } else if (!state.dragging && state.dragType === 'cancel') {
