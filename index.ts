@@ -47,7 +47,7 @@ const squaresState: BehaviorSubject<SquaresState> = new BehaviorSubject(
   currentSquaresState
 );
 const setState = (state: SquaresState): void => {
-  squaresState.next(getState(state));
+  return squaresState.next(getState(state));
 }
 const getState = (state: SquaresState): SquaresState => {
   return {
@@ -108,6 +108,8 @@ const renderUi = (state: SquaresState): void => {
   renderButtonStates(state);
 }
 
+// Need to keep these buttons disabled
+// if there are no items on the canvas
 const renderButtonStates = (state: SquaresState): void => {
   if (!state.squareCount) {
     clearButton.setAttribute('disabled', '');
@@ -120,7 +122,7 @@ const renderButtonStates = (state: SquaresState): void => {
 
 // Here's some dom manipulation and state manaagement
 // we need to do when the user clicks the undo and clear buttons
-const undoLast = () => {
+const undoLast = (): void => {
   const children = Array.from(main.childNodes);
   const undoSquare = children.filter((x, i) => i === (children.length - 1));
   main.removeChild(document.getElementById(undoSquare[0]['id']));
@@ -176,18 +178,18 @@ const gatherEventStream = (): void => {
   undo$.subscribe(() => undoLast());
   squaresState.subscribe(state => {
     currentSquaresState = state;
-    renderUi(state);
+    return renderUi(state);
   });
-  mouseEventStream$.subscribe((state: MouseEvent) => {
+  mouseEventStream$.subscribe((state: MouseEvent): void => {
     if (state.type === 'start') {
-      setState({
+      return setState({
         ...currentSquaresState,
         dragging: true,
         startPoint: { x: state.clientX, y: state.clientY },
         dragType: state.type
       });
     } else if (state.type === 'cancel') {
-      setState({
+      return setState({
         ...currentSquaresState,
         dragging: false,
         endPoint: { x: state.clientX, y: state.clientY },
@@ -195,7 +197,7 @@ const gatherEventStream = (): void => {
         squareCount: currentSquaresState.squareCount + 1
       });
     } else {
-      setState({
+      return setState({
         ...currentSquaresState,
         coordinates: { x: state.clientX, y: state.clientY },
         dragType: state.type
