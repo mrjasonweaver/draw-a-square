@@ -67,7 +67,7 @@ const getState = (state: SquaresState): SquaresState => {
 const renderUi = (state: SquaresState): void => {
   let square;
   let currentSquare;
-  const squareSelector = `square-${state.squareCount}`;
+  const squareSelector = `square-${state.squareCount + 1}`;
   const dragLeft = state.startPoint.x > state.coordinates.x;
   const dragUp = state.startPoint.y > state.coordinates.y;
   if (state.dragging === true) {
@@ -102,6 +102,17 @@ const renderUi = (state: SquaresState): void => {
     }
   } else {
     countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
+  }
+  renderButtonStates(state);
+}
+
+const renderButtonStates = (state: SquaresState): void => {
+  if (!state.squareCount) {
+    clearButton.setAttribute('disabled', 'disabled');
+    undoButton.setAttribute('disabled', 'disabled');
+  } else {
+    clearButton.removeAttribute('disabled');
+    undoButton.removeAttribute('disabled');
   }
 }
 
