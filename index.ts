@@ -108,8 +108,8 @@ const renderUi = (state: SquaresState): void => {
 
 const renderButtonStates = (state: SquaresState): void => {
   if (!state.squareCount) {
-    clearButton.setAttribute('disabled', 'disabled');
-    undoButton.setAttribute('disabled', 'disabled');
+    clearButton.setAttribute('disabled', '');
+    undoButton.setAttribute('disabled', '');
   } else {
     clearButton.removeAttribute('disabled');
     undoButton.removeAttribute('disabled');
