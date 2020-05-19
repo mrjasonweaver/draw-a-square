@@ -62,6 +62,8 @@ const getState = (state: SquaresState): SquaresState => {
     squareCount: state.squareCount
   };
 }
+// Setting initial counter
+countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
 
 // All things adding to the DOM
 const renderUi = (state: SquaresState): void => {
@@ -70,7 +72,7 @@ const renderUi = (state: SquaresState): void => {
   const squareSelector = `square-${state.squareCount + 1}`;
   const dragLeft = state.startPoint.x > state.coordinates.x;
   const dragUp = state.startPoint.y > state.coordinates.y;
-  if (state.dragging === true) {
+  if (state.dragging) {
     if (state.dragType === 'start') {
       square = document.createElementNS("http://www.w3.org/2000/svg", "rect");
       square.setAttribute('id', squareSelector);
@@ -100,7 +102,7 @@ const renderUi = (state: SquaresState): void => {
         currentSquare.setAttribute('height', state.startPoint.y - state.coordinates.y);       
       }
     }
-  } else {
+  } else if (!state.dragging && state.dragType === 'cancel') {
     countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
   }
   renderButtonStates(state);
@@ -126,6 +128,7 @@ const undoLast = () => {
     ...currentSquaresState,
     squareCount: currentSquaresState.squareCount - 1
   });
+  countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
 }
 const clearSVG = () => {
   main.innerHTML = '';
@@ -133,6 +136,7 @@ const clearSVG = () => {
     ...currentSquaresState,
     squareCount: 0
   });
+  countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
 }
 
 // We need to make event streams for undo and clear buttons
