@@ -91,28 +91,26 @@ countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
 
 // Do things based on dragging state
 const renderUi = (state: SquaresState): void => {
-  if (state.dragging) {
-    const config: SvgSelectorConfig = {
-      svgUrl: 'http://www.w3.org/2000/svg',
-      boundingBoxSelector: `boundingBox-${state.squareCount + 1}`,
-      squareSelector: `square-${state.squareCount + 1}`,
-      textNodeDimensionsSelector: `text-width-${state.squareCount + 1}`
-    }
-    if (state.dragType === 'start') {
-      initDraw(state, config);
-    } else if (state.dragType === 'drag') {
-      currentSquare = document.querySelector(`#${config.squareSelector}`);
-      currentTextNodeDimensions = document.querySelector(`#${config.textNodeDimensionsSelector}`);
-      drawSquare(state);
-    }
-  } else if (!state.dragging && state.dragType === 'cancel') {
+  const config: SvgSelectorConfig = {
+    svgUrl: 'http://www.w3.org/2000/svg',
+    boundingBoxSelector: `boundingBox-${state.squareCount + 1}`,
+    squareSelector: `square-${state.squareCount + 1}`,
+    textNodeDimensionsSelector: `text-width-${state.squareCount + 1}`
+  }
+  if (state.dragging && state.dragType === 'start') {
+    initDraw(state, config);
+  }
+  if (state.dragging && state.dragType === 'drag') {
+    drawSquare(state, config);
+  }
+  if (!state.dragging && state.dragType === 'cancel') {
     countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
   }
   renderButtonStates(state);
 }
 
 // Make some SVG elements and add to the DOM
-const initDraw = (state: SquaresState, config): void => {
+const initDraw = (state: SquaresState, config: SvgSelectorConfig): void => {
   const xPos = state.coordinates.x.toString();
   const yPos = state.coordinates.y.toString();
   boundingBox = document.createElementNS(config.svgUrl, 'g');
@@ -133,8 +131,10 @@ const initDraw = (state: SquaresState, config): void => {
   main.appendChild(boundingBox);
 }
 
-// Drawing to the DOM
-const drawSquare = (state: SquaresState): void => {
+// Drawing the square
+const drawSquare = (state: SquaresState, config: SvgSelectorConfig): void => {
+  currentSquare = document.querySelector(`#${config.squareSelector}`);
+  currentTextNodeDimensions = document.querySelector(`#${config.textNodeDimensionsSelector}`);
   const xPos = state.coordinates.x.toString();
   const yPos = state.coordinates.y.toString();
   const width = state.dragDirection.dragLeft
