@@ -109,7 +109,9 @@ const renderUi = (state: SquaresState): void => {
   renderButtonStates(state);
 }
 
-// Make some SVG elements and add to the DOM
+/**
+ *  Make some SVG elements and add to the DOM
+ */
 const initDraw = (state: SquaresState, config: SvgSelectorConfig): void => {
   const xPos = state.coordinates.x.toString();
   const yPos = state.coordinates.y.toString();
