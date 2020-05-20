@@ -24,7 +24,7 @@ interface SquaresState {
   dragDirection: DragDirection;
   squareCount: number;
 }
-interface svgSelectorConfig {
+interface SvgSelectorConfig {
   svgUrl: string;
   boundingBoxSelector: string;
   squareSelector: string;
@@ -92,7 +92,7 @@ countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
 // Do things based on dragging state
 const renderUi = (state: SquaresState): void => {
   if (state.dragging) {
-    const config: svgSelectorConfig = {
+    const config: SvgSelectorConfig = {
       svgUrl: 'http://www.w3.org/2000/svg',
       boundingBoxSelector: `boundingBox-${state.squareCount + 1}`,
       squareSelector: `square-${state.squareCount + 1}`,
