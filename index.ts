@@ -132,21 +132,15 @@ const drawSquare = (state: SquaresState): void => {
   currentSquare.setAttribute('height', heightStr);
   currentTextNodeDimensions.innerHTML = dimensions;
 
-  if ((state.dragDirection.dragUp && state.dragDirection.dragLeft)
-    || (!state.dragDirection.dragUp && state.dragDirection.dragLeft)) {
+  if (state.dragDirection.dragLeft) {
     currentSquare.setAttribute('x', state.coordinates.x.toString());
   }
-  if ((state.dragDirection.dragUp && !state.dragDirection.dragLeft)
-    || (state.dragDirection.dragUp && state.dragDirection.dragLeft)) {
+  if (state.dragDirection.dragUp) {
     currentSquare.setAttribute('y', state.coordinates.y.toString());
-  }
-  if ((state.dragDirection.dragUp && !state.dragDirection.dragLeft)
-    || (!state.dragDirection.dragUp && !state.dragDirection.dragLeft)) {
-    currentTextNodeDimensions.setAttribute('x', state.coordinates.x.toString());
-  }
-  if ((state.dragDirection.dragUp && state.dragDirection.dragLeft)
-    || (state.dragDirection.dragUp && !state.dragDirection.dragLeft)) {
     currentTextNodeDimensions.setAttribute('y', state.coordinates.y.toString());
+  }
+  if (!state.dragDirection.dragLeft) {
+    currentTextNodeDimensions.setAttribute('x', state.coordinates.x.toString());
   }
 }
 
