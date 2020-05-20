@@ -24,6 +24,12 @@ interface SquaresState {
   dragDirection: DragDirection;
   squareCount: number;
 }
+interface svgSelectorConfig {
+  svgUrl: string;
+  boundingBoxSelector: string;
+  squareSelector: string;
+  textNodeDimensionsSelector: string;
+}
 
 // A few dom elements stored here
 const main: HTMLElement = document.querySelector('#main'),
@@ -31,11 +37,11 @@ countEl: HTMLElement = document.querySelector('count'),
 clearButton: HTMLElement = document.querySelector('#clear'),
 undoButton: HTMLElement = document.querySelector('#undo');
 
-let boundingBox: SVGGElement;
-let square: SVGRectElement;
-let currentSquare: SVGRectElement;
-let textNodeDimensions: SVGTextElement;
-let currentTextNodeDimensions: SVGTextElement;
+let boundingBox;
+let square;
+let currentSquare;
+let textNodeDimensions;
+let currentTextNodeDimensions;
 
 // We're organizing our initial & current state in an object
 // with the same shape as our data model interface above
@@ -83,33 +89,20 @@ const getState = (state: SquaresState): SquaresState => {
 // Setting initial counter
 countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
 
-// Drawing to the DOM
+// Do things based on dragging state
 const renderUi = (state: SquaresState): void => {
-  const svgUrl = 'http://www.w3.org/2000/svg';
-  const boundingBoxSelector = `boundingBox-${state.squareCount + 1}`;
-  const squareSelector = `square-${state.squareCount + 1}`;
-  const textNodeDimensionsSelector = `text-width-${state.squareCount + 1}`;
   if (state.dragging) {
+    const config: svgSelectorConfig = {
+      svgUrl: 'http://www.w3.org/2000/svg',
+      boundingBoxSelector: `boundingBox-${state.squareCount + 1}`,
+      squareSelector: `square-${state.squareCount + 1}`,
+      textNodeDimensionsSelector: `text-width-${state.squareCount + 1}`
+    }
     if (state.dragType === 'start') {
-      boundingBox = document.createElementNS(svgUrl, 'g');
-      boundingBox.setAttribute('id', boundingBoxSelector);
-      boundingBox.setAttribute('x', state.coordinates.x.toString());
-      boundingBox.setAttribute('y', state.coordinates.y.toString());
-      square = document.createElementNS(svgUrl, 'rect');
-      square.setAttribute('id', squareSelector);
-      square.setAttribute('x', state.coordinates.x.toString());
-      square.setAttribute('y', state.coordinates.y.toString());
-      textNodeDimensions = document.createElementNS(svgUrl, 'text');
-      textNodeDimensions.setAttribute('id', textNodeDimensionsSelector);
-      textNodeDimensions.setAttribute('x', state.coordinates.x.toString());
-      textNodeDimensions.setAttribute('y', state.coordinates.y.toString());
-      boundingBox.appendChild(textNodeDimensions);
-      boundingBox.appendChild(square);
-      boundingBox.appendChild(textNodeDimensions);
-      main.appendChild(boundingBox);
+      initDraw(state, config);
     } else if (state.dragType === 'drag') {
-      currentSquare = document.querySelector(`#${squareSelector}`);
-      currentTextNodeDimensions = document.querySelector(`#${textNodeDimensionsSelector}`);
+      currentSquare = document.querySelector(`#${config.squareSelector}`);
+      currentTextNodeDimensions = document.querySelector(`#${config.textNodeDimensionsSelector}`);
       drawSquare(state);
     }
   } else if (!state.dragging && state.dragType === 'cancel') {
@@ -118,6 +111,27 @@ const renderUi = (state: SquaresState): void => {
   renderButtonStates(state);
 }
 
+// Make some SVG elements and add to the DOM
+const initDraw = (state: SquaresState, config): void => {
+  boundingBox = document.createElementNS(config.svgUrl, 'g');
+  boundingBox.setAttribute('id', config.boundingBoxSelector);
+  boundingBox.setAttribute('x', state.coordinates.x.toString());
+  boundingBox.setAttribute('y', state.coordinates.y.toString());
+  square = document.createElementNS(config.svgUrl, 'rect');
+  square.setAttribute('id', config.squareSelector);
+  square.setAttribute('x', state.coordinates.x.toString());
+  square.setAttribute('y', state.coordinates.y.toString());
+  textNodeDimensions = document.createElementNS(config.svgUrl, 'text');
+  textNodeDimensions.setAttribute('id', config.textNodeDimensionsSelector);
+  textNodeDimensions.setAttribute('x', state.coordinates.x.toString());
+  textNodeDimensions.setAttribute('y', state.coordinates.y.toString());
+  boundingBox.appendChild(textNodeDimensions);
+  boundingBox.appendChild(square);
+  boundingBox.appendChild(textNodeDimensions);
+  main.appendChild(boundingBox);
+}
+
+// Drawing to the DOM
 const drawSquare = (state: SquaresState): void => {
   const width = state.dragDirection.dragLeft
     ? state.startPoint.x - state.coordinates.x
@@ -132,15 +146,12 @@ const drawSquare = (state: SquaresState): void => {
   currentSquare.setAttribute('height', heightStr);
   currentTextNodeDimensions.innerHTML = dimensions;
 
-  if (state.dragDirection.dragLeft) {
-    currentSquare.setAttribute('x', state.coordinates.x.toString());
-  }
+  state.dragDirection.dragLeft
+    ? currentSquare.setAttribute('x', state.coordinates.x.toString())
+    : currentTextNodeDimensions.setAttribute('x', state.coordinates.x.toString());
   if (state.dragDirection.dragUp) {
     currentSquare.setAttribute('y', state.coordinates.y.toString());
     currentTextNodeDimensions.setAttribute('y', state.coordinates.y.toString());
-  }
-  if (!state.dragDirection.dragLeft) {
-    currentTextNodeDimensions.setAttribute('x', state.coordinates.x.toString());
   }
 }
 
