@@ -10,7 +10,10 @@ interface MouseEvent extends Event {
   clientX: number;
   clientY: number;
   type: string;
-  
+}
+interface DragDirection {
+  dragLeft: boolean;
+  dragUp: boolean;
 }
 interface SquaresState {
   coordinates: Coordinates;
@@ -18,6 +21,7 @@ interface SquaresState {
   startPoint: Coordinates;
   endPoint: Coordinates;
   dragType: string;
+  dragDirection: DragDirection;
   squareCount: number;
 }
 
@@ -26,6 +30,12 @@ const main: HTMLElement = document.querySelector('#main'),
 countEl: HTMLElement = document.querySelector('count'),
 clearButton: HTMLElement = document.querySelector('#clear'),
 undoButton: HTMLElement = document.querySelector('#undo');
+
+let boundingBox: SVGGElement;
+let square: SVGRectElement;
+let currentSquare: SVGRectElement;
+let textNodeDimensions: SVGTextElement;
+let currentTextNodeDimensions: SVGTextElement;
 
 // We're organizing our initial & current state in an object
 // with the same shape as our data model interface above
@@ -38,6 +48,10 @@ let currentSquaresState: SquaresState = {
   startPoint: { x: 0, y: 0 },
   endPoint: { x: 0, y: 0 },
   dragType: '',
+  dragDirection: {
+    dragLeft: false,
+    dragUp: false
+  },
   squareCount: 0
 };
 
@@ -59,6 +73,10 @@ const getState = (state: SquaresState): SquaresState => {
     startPoint: { x: state.startPoint.x, y: state.startPoint.y },
     endPoint: { x: state.endPoint.x, y: state.endPoint.y },
     dragType: state.dragType,
+    dragDirection: {
+      dragLeft: state.startPoint.x > state.coordinates.x || false,
+      dragUp: state.startPoint.y > state.coordinates.y || false
+    },
     squareCount: state.squareCount
   };
 }
@@ -67,17 +85,10 @@ countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
 
 // Drawing to the DOM
 const renderUi = (state: SquaresState): void => {
-  let boundingBox: SVGGElement;
-  let square: SVGRectElement;
-  let currentSquare: SVGRectElement;
-  let textNodeDimensions: SVGTextElement;
-  let currentTextNodeDimensions;
   const svgUrl = 'http://www.w3.org/2000/svg';
   const boundingBoxSelector = `boundingBox-${state.squareCount + 1}`;
   const squareSelector = `square-${state.squareCount + 1}`;
   const textNodeDimensionsSelector = `text-width-${state.squareCount + 1}`;
-  const dragLeft = state.startPoint.x > state.coordinates.x;
-  const dragUp = state.startPoint.y > state.coordinates.y;
   if (state.dragging) {
     if (state.dragType === 'start') {
       boundingBox = document.createElementNS(svgUrl, 'g');
@@ -99,51 +110,44 @@ const renderUi = (state: SquaresState): void => {
     } else if (state.dragType === 'drag') {
       currentSquare = document.querySelector(`#${squareSelector}`);
       currentTextNodeDimensions = document.querySelector(`#${textNodeDimensionsSelector}`);
-      if (!dragUp && !dragLeft) {
-        const width = (state.coordinates.x - state.startPoint.x).toString();
-        const height = (state.coordinates.y - state.startPoint.y).toString();
-        const dimensions = `${width} x ${height}`;
-        currentSquare.setAttribute('width', width);
-        currentSquare.setAttribute('height', height);
-        currentTextNodeDimensions.innerHTML = dimensions;
-        currentTextNodeDimensions.setAttribute('x', state.coordinates.x);
-      }
-      if (dragUp && dragLeft) {
-        const width = (state.startPoint.x - state.coordinates.x).toString();
-        const height = (state.startPoint.y - state.coordinates.y).toString();
-        const dimensions = `${width} x ${height}`;
-        currentSquare.setAttribute('x', state.coordinates.x.toString());
-        currentSquare.setAttribute('y', state.coordinates.y.toString());
-        currentSquare.setAttribute('width', width);
-        currentSquare.setAttribute('height', height);
-        currentTextNodeDimensions.innerHTML = dimensions;
-        currentTextNodeDimensions.setAttribute('y', state.coordinates.y);
-      }
-      if (!dragUp && dragLeft) {
-        const width = (state.startPoint.x - state.coordinates.x).toString();
-        const height = (state.coordinates.y - state.startPoint.y).toString();
-        const dimensions = `${width} x ${height}`;
-        currentSquare.setAttribute('x', state.coordinates.x.toString());
-        currentSquare.setAttribute('width', width);
-        currentSquare.setAttribute('height', height);
-        currentTextNodeDimensions.innerHTML = dimensions;
-      } 
-      if (dragUp && !dragLeft) {
-        const width = (state.coordinates.x - state.startPoint.x).toString();
-        const height = (state.startPoint.y - state.coordinates.y).toString();
-        const dimensions = `${width} x ${height}`;
-        currentSquare.setAttribute('y', state.coordinates.y.toString());
-        currentSquare.setAttribute('width', width);
-        currentSquare.setAttribute('height', height);
-        currentTextNodeDimensions.innerHTML = dimensions;
-        currentTextNodeDimensions.setAttribute('y', state.coordinates.y);
-        currentTextNodeDimensions.setAttribute('x', state.coordinates.x);
-      }
+      drawSquare(state);
     }
   } else if (!state.dragging && state.dragType === 'cancel') {
     countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
   }
   renderButtonStates(state);
+}
+
+const drawSquare = (state: SquaresState): void => {
+  const width = state.dragDirection.dragLeft
+    ? state.startPoint.x - state.coordinates.x
+    : state.coordinates.x - state.startPoint.x;
+  const height = state.dragDirection.dragUp
+    ? state.startPoint.y - state.coordinates.y
+    : state.coordinates.y - state.startPoint.y;
+  const widthStr = width.toString();
+  const heightStr = height.toString();
+  const dimensions = `${width} x ${height}`;
+  currentSquare.setAttribute('width', widthStr);
+  currentSquare.setAttribute('height', heightStr);
+  currentTextNodeDimensions.innerHTML = dimensions;
+
+  if ((state.dragDirection.dragUp && state.dragDirection.dragLeft)
+    || (!state.dragDirection.dragUp && state.dragDirection.dragLeft)) {
+    currentSquare.setAttribute('x', state.coordinates.x.toString());
+  }
+  if ((state.dragDirection.dragUp && !state.dragDirection.dragLeft)
+    || (state.dragDirection.dragUp && state.dragDirection.dragLeft)) {
+    currentSquare.setAttribute('y', state.coordinates.y.toString());
+  }
+  if ((state.dragDirection.dragUp && !state.dragDirection.dragLeft)
+    || (!state.dragDirection.dragUp && !state.dragDirection.dragLeft)) {
+    currentTextNodeDimensions.setAttribute('x', state.coordinates.x.toString());
+  }
+  if ((state.dragDirection.dragUp && state.dragDirection.dragLeft)
+    || (state.dragDirection.dragUp && !state.dragDirection.dragLeft)) {
+    currentTextNodeDimensions.setAttribute('y', state.coordinates.y.toString());
+  }
 }
 
 // Need to keep these buttons disabled
