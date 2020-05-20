@@ -72,7 +72,6 @@ const renderUi = (state: SquaresState): void => {
   let currentSquare: SVGRectElement;
   let textNodeWidth: SVGTextElement;
   let currentTextNodeWidth;
-  let textNodeWidthContent;
   const boundingBoxSelector = `boundingBox-${state.squareCount + 1}`;
   const squareSelector = `square-${state.squareCount + 1}`;
   const textNodeWidthSelector = `text-width-${state.squareCount + 1}`;
@@ -92,8 +91,6 @@ const renderUi = (state: SquaresState): void => {
       textNodeWidth.setAttribute('id', textNodeWidthSelector);
       textNodeWidth.setAttribute('x', state.coordinates.x.toString());
       textNodeWidth.setAttribute('y', state.coordinates.y.toString());
-      textNodeWidthContent = document.createTextNode('width');
-      textNodeWidth.appendChild(textNodeWidthContent);
       boundingBox.appendChild(textNodeWidth);
       boundingBox.appendChild(square);
       boundingBox.appendChild(textNodeWidth);
@@ -102,16 +99,20 @@ const renderUi = (state: SquaresState): void => {
       currentSquare = document.querySelector(`#${squareSelector}`);
       currentTextNodeWidth = document.querySelector(`#${textNodeWidthSelector}`);
       if (!dragUp && !dragLeft) {
-        currentSquare.setAttribute('width', (state.coordinates.x - state.startPoint.x).toString());
+        const width = (state.coordinates.x - state.startPoint.x).toString();
+        currentSquare.setAttribute('width', width);
         currentSquare.setAttribute('height', (state.coordinates.y - state.startPoint.y).toString());
-        currentTextNodeWidth.setAttribute('x', state.coordinates.x.toString());
-        // currentTextNodeWidth.setAttribute('x', (state.coordinates.x - state.startPoint.x).toString());
+        currentTextNodeWidth.innerHTML = width;
+        currentTextNodeWidth.setAttribute('x', state.coordinates.x);
       }
       if (dragUp && dragLeft) {
+        const width = (state.startPoint.x - state.coordinates.x).toString();
         currentSquare.setAttribute('x', state.coordinates.x.toString());
         currentSquare.setAttribute('y', state.coordinates.y.toString());
-        currentSquare.setAttribute('width', (state.startPoint.x - state.coordinates.x).toString());
-        currentSquare.setAttribute('height', (state.startPoint.y - state.coordinates.y).toString());     
+        currentSquare.setAttribute('width', width);
+        currentSquare.setAttribute('height', (state.startPoint.y - state.coordinates.y).toString());
+        currentTextNodeWidth.innerHTML = width;
+        currentTextNodeWidth.setAttribute('x', state.coordinates.x);  
       }
       if (!dragUp && dragLeft) {
         currentSquare.setAttribute('x', state.coordinates.x.toString());
