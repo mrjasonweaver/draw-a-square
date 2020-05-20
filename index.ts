@@ -113,18 +113,20 @@ const renderUi = (state: SquaresState): void => {
 
 // Make some SVG elements and add to the DOM
 const initDraw = (state: SquaresState, config): void => {
+  const xPos = state.coordinates.x.toString();
+  const yPos = state.coordinates.y.toString();
   boundingBox = document.createElementNS(config.svgUrl, 'g');
   boundingBox.setAttribute('id', config.boundingBoxSelector);
-  boundingBox.setAttribute('x', state.coordinates.x.toString());
-  boundingBox.setAttribute('y', state.coordinates.y.toString());
+  boundingBox.setAttribute('x', xPos);
+  boundingBox.setAttribute('y', yPos);
   square = document.createElementNS(config.svgUrl, 'rect');
   square.setAttribute('id', config.squareSelector);
-  square.setAttribute('x', state.coordinates.x.toString());
-  square.setAttribute('y', state.coordinates.y.toString());
+  square.setAttribute('x', xPos);
+  square.setAttribute('y', yPos);
   textNodeDimensions = document.createElementNS(config.svgUrl, 'text');
   textNodeDimensions.setAttribute('id', config.textNodeDimensionsSelector);
-  textNodeDimensions.setAttribute('x', state.coordinates.x.toString());
-  textNodeDimensions.setAttribute('y', state.coordinates.y.toString());
+  textNodeDimensions.setAttribute('x', xPos);
+  textNodeDimensions.setAttribute('y', yPos);
   boundingBox.appendChild(textNodeDimensions);
   boundingBox.appendChild(square);
   boundingBox.appendChild(textNodeDimensions);
@@ -133,6 +135,8 @@ const initDraw = (state: SquaresState, config): void => {
 
 // Drawing to the DOM
 const drawSquare = (state: SquaresState): void => {
+  const xPos = state.coordinates.x.toString();
+  const yPos = state.coordinates.y.toString();
   const width = state.dragDirection.dragLeft
     ? state.startPoint.x - state.coordinates.x
     : state.coordinates.x - state.startPoint.x;
@@ -147,11 +151,11 @@ const drawSquare = (state: SquaresState): void => {
   currentTextNodeDimensions.innerHTML = dimensions;
 
   state.dragDirection.dragLeft
-    ? currentSquare.setAttribute('x', state.coordinates.x.toString())
-    : currentTextNodeDimensions.setAttribute('x', state.coordinates.x.toString());
+    ? currentSquare.setAttribute('x', xPos)
+    : currentTextNodeDimensions.setAttribute('x', xPos);
   if (state.dragDirection.dragUp) {
-    currentSquare.setAttribute('y', state.coordinates.y.toString());
-    currentTextNodeDimensions.setAttribute('y', state.coordinates.y.toString());
+    currentSquare.setAttribute('y', yPos);
+    currentTextNodeDimensions.setAttribute('y', yPos);
   }
 }
 
