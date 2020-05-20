@@ -50,10 +50,17 @@ rect, g {
   fill: transparent;
   stroke: black;
   stroke-width: 1;
+  position: relative;
 }
 text {
   font-size: 12px;
   font-family: 'Roboto', sans-serif;
   fill: lightblue;
   stroke: transparent;
+  transform: translate(0px, -3px);
+  text-align: right;
+  text-anchor: end;
+}
+text::selection {
+  background: transparent;
 }

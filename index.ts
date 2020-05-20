@@ -70,59 +70,74 @@ const renderUi = (state: SquaresState): void => {
   let boundingBox: SVGGElement;
   let square: SVGRectElement;
   let currentSquare: SVGRectElement;
-  let textNodeWidth: SVGTextElement;
-  let currentTextNodeWidth;
+  let textNodeDimensions: SVGTextElement;
+  let currentTextNodeDimensions;
+  const svgUrl = 'http://www.w3.org/2000/svg';
   const boundingBoxSelector = `boundingBox-${state.squareCount + 1}`;
   const squareSelector = `square-${state.squareCount + 1}`;
-  const textNodeWidthSelector = `text-width-${state.squareCount + 1}`;
+  const textNodeDimensionsSelector = `text-width-${state.squareCount + 1}`;
   const dragLeft = state.startPoint.x > state.coordinates.x;
   const dragUp = state.startPoint.y > state.coordinates.y;
   if (state.dragging) {
     if (state.dragType === 'start') {
-      boundingBox = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      boundingBox = document.createElementNS(svgUrl, 'g');
       boundingBox.setAttribute('id', boundingBoxSelector);
       boundingBox.setAttribute('x', state.coordinates.x.toString());
       boundingBox.setAttribute('y', state.coordinates.y.toString());
-      square = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      square = document.createElementNS(svgUrl, 'rect');
       square.setAttribute('id', squareSelector);
       square.setAttribute('x', state.coordinates.x.toString());
       square.setAttribute('y', state.coordinates.y.toString());
-      textNodeWidth = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      textNodeWidth.setAttribute('id', textNodeWidthSelector);
-      textNodeWidth.setAttribute('x', state.coordinates.x.toString());
-      textNodeWidth.setAttribute('y', state.coordinates.y.toString());
-      boundingBox.appendChild(textNodeWidth);
+      textNodeDimensions = document.createElementNS(svgUrl, 'text');
+      textNodeDimensions.setAttribute('id', textNodeDimensionsSelector);
+      textNodeDimensions.setAttribute('x', state.coordinates.x.toString());
+      textNodeDimensions.setAttribute('y', state.coordinates.y.toString());
+      boundingBox.appendChild(textNodeDimensions);
       boundingBox.appendChild(square);
-      boundingBox.appendChild(textNodeWidth);
+      boundingBox.appendChild(textNodeDimensions);
       main.appendChild(boundingBox);
     } else if (state.dragType === 'drag') {
       currentSquare = document.querySelector(`#${squareSelector}`);
-      currentTextNodeWidth = document.querySelector(`#${textNodeWidthSelector}`);
+      currentTextNodeDimensions = document.querySelector(`#${textNodeDimensionsSelector}`);
       if (!dragUp && !dragLeft) {
         const width = (state.coordinates.x - state.startPoint.x).toString();
+        const height = (state.coordinates.y - state.startPoint.y).toString();
+        const dimensions = `${width} x ${height}`;
         currentSquare.setAttribute('width', width);
-        currentSquare.setAttribute('height', (state.coordinates.y - state.startPoint.y).toString());
-        currentTextNodeWidth.innerHTML = width;
-        currentTextNodeWidth.setAttribute('x', state.coordinates.x);
+        currentSquare.setAttribute('height', height);
+        currentTextNodeDimensions.innerHTML = dimensions;
+        currentTextNodeDimensions.setAttribute('x', state.coordinates.x);
       }
       if (dragUp && dragLeft) {
         const width = (state.startPoint.x - state.coordinates.x).toString();
+        const height = (state.startPoint.y - state.coordinates.y).toString();
+        const dimensions = `${width} x ${height}`;
         currentSquare.setAttribute('x', state.coordinates.x.toString());
         currentSquare.setAttribute('y', state.coordinates.y.toString());
         currentSquare.setAttribute('width', width);
-        currentSquare.setAttribute('height', (state.startPoint.y - state.coordinates.y).toString());
-        currentTextNodeWidth.innerHTML = width;
-        currentTextNodeWidth.setAttribute('x', state.coordinates.x);  
+        currentSquare.setAttribute('height', height);
+        currentTextNodeDimensions.innerHTML = dimensions;
+        currentTextNodeDimensions.setAttribute('y', state.coordinates.y);
       }
       if (!dragUp && dragLeft) {
+        const width = (state.startPoint.x - state.coordinates.x).toString();
+        const height = (state.coordinates.y - state.startPoint.y).toString();
+        const dimensions = `${width} x ${height}`;
         currentSquare.setAttribute('x', state.coordinates.x.toString());
-        currentSquare.setAttribute('width', (state.startPoint.x - state.coordinates.x).toString());
-        currentSquare.setAttribute('height', (state.coordinates.y - state.startPoint.y).toString()); 
+        currentSquare.setAttribute('width', width);
+        currentSquare.setAttribute('height', height);
+        currentTextNodeDimensions.innerHTML = dimensions;
       } 
       if (dragUp && !dragLeft) {
+        const width = (state.coordinates.x - state.startPoint.x).toString();
+        const height = (state.startPoint.y - state.coordinates.y).toString();
+        const dimensions = `${width} x ${height}`;
         currentSquare.setAttribute('y', state.coordinates.y.toString());
-        currentSquare.setAttribute('width', (state.coordinates.x - state.startPoint.x).toString());
-        currentSquare.setAttribute('height', (state.startPoint.y - state.coordinates.y).toString());       
+        currentSquare.setAttribute('width', width);
+        currentSquare.setAttribute('height', height);
+        currentTextNodeDimensions.innerHTML = dimensions;
+        currentTextNodeDimensions.setAttribute('y', state.coordinates.y);
+        currentTextNodeDimensions.setAttribute('x', state.coordinates.x);
       }
     }
   } else if (!state.dragging && state.dragType === 'cancel') {
