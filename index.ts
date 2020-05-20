@@ -89,7 +89,11 @@ const getState = (state: SquaresState): SquaresState => {
 // Setting initial counter
 countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
 
-// Do things based on dragging state
+/**
+ * Do things based on dragging state
+ * @param state 
+ */
+
 const renderUi = (state: SquaresState): void => {
   const config: SvgSelectorConfig = {
     svgUrl: 'http://www.w3.org/2000/svg',
@@ -110,7 +114,9 @@ const renderUi = (state: SquaresState): void => {
 }
 
 /**
- *  Make some SVG elements and add to the DOM
+ * Make some SVG elements and add to the DOM
+ * @param state 
+ * @param config 
  */
 const initDraw = (state: SquaresState, config: SvgSelectorConfig): void => {
   const xPos = state.coordinates.x.toString();
