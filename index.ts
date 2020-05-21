@@ -264,5 +264,6 @@ const gatherEventStream = (): void => {
     }
   });
 }
-
-gatherEventStream();
+window.addEventListener('DOMContentLoaded',function () {
+  gatherEventStream();
+});
