@@ -4,6 +4,8 @@
   "description": "Draw a square using TypeScript, RxJS, and svg",
   "main": "index.js",
   "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html -d docs --public-url https://mrjasonweaver.github.io/draw-a-square/ --no-minify --no-source-maps",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
