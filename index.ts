@@ -1,35 +1,6 @@
 import { fromEvent, Observable, BehaviorSubject, merge } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-// Here's where we're defining data models and types
-interface Coordinates {
-  x: number;
-  y: number;
-}
-interface MouseEvent extends Event {
-  clientX: number;
-  clientY: number;
-  type: string;
-}
-interface DragDirection {
-  dragLeft: boolean;
-  dragUp: boolean;
-}
-interface SquaresState {
-  coordinates: Coordinates;
-  dragging: boolean;
-  startPoint: Coordinates;
-  endPoint: Coordinates;
-  dragType: string;
-  dragDirection: DragDirection;
-  squareCount: number;
-}
-interface SvgSelectorConfig {
-  svgUrl: string;
-  boundingBoxSelector: string;
-  squareSelector: string;
-  textNodeDimensionsSelector: string;
-}
+import { SquaresState, SvgSelectorConfig } from './interfaces/drag-states.interface'
 
 // A few dom elements stored here
 const main: HTMLElement = document.querySelector('#main'),
@@ -139,7 +110,11 @@ const initDraw = (state: SquaresState, config: SvgSelectorConfig): void => {
   main.appendChild(boundingBox);
 }
 
-// Drawing the square
+/**
+ * Drawing the square
+ * @param state 
+ * @param config 
+ */
 const drawSquare = (state: SquaresState, config: SvgSelectorConfig): void => {
   currentSquare = document.querySelector(`#${config.squareSelector}`);
   currentTextNodeDimensions = document.querySelector(`#${config.textNodeDimensionsSelector}`);
@@ -264,6 +239,5 @@ const gatherEventStream = (): void => {
     }
   });
 }
-window.addEventListener('DOMContentLoaded',function () {
-  gatherEventStream();
-});
+
+gatherEventStream();

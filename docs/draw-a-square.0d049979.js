@@ -15052,7 +15052,12 @@ var initDraw = function initDraw(state, config) {
   boundingBox.appendChild(square);
   boundingBox.appendChild(textNodeDimensions);
   main.appendChild(boundingBox);
-}; // Drawing the square
+};
+/**
+ * Drawing the square
+ * @param state
+ * @param config
+ */
 
 
 var drawSquare = function drawSquare(state, config) {
@@ -15182,7 +15187,5 @@ var gatherEventStream = function gatherEventStream() {
   });
 };
 
-window.addEventListener('DOMContentLoaded', function () {
-  gatherEventStream();
-});
+gatherEventStream();
 },{"rxjs":"qwSA","rxjs/operators":"lJlm"}]},{},["QCba"], null)
