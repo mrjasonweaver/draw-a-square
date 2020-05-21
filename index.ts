@@ -14,9 +14,10 @@ let square;
 let currentSquare;
 let textNodeDimensions;
 let currentTextNodeDimensions;
+let curState = currentSquaresState;
 
 // Setting initial counter
-countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
+countEl.innerHTML = `Squares: ${curState.squareCount}`;
 
 /**
  * Do things based on dragging state
@@ -37,7 +38,7 @@ const renderUi = (state: SquaresState): void => {
     drawSquare(state, config);
   }
   if (!state.dragging && state.dragType === 'cancel') {
-    countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
+    countEl.innerHTML = `Squares: ${curState.squareCount}`;
   }
   renderButtonStates(state);
 }
@@ -119,18 +120,18 @@ const undoLast = (): void => {
   const undoSquare = children.filter((x, i) => i === (children.length - 1));
   main.removeChild(document.getElementById(undoSquare[0]['id']));
   setState({
-    ...currentSquaresState,
-    squareCount: currentSquaresState.squareCount - 1
+    ...curState,
+    squareCount: curState.squareCount - 1
   });
-  countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
+  countEl.innerHTML = `Squares: ${curState.squareCount}`;
 }
 const clearSVG = () => {
   main.innerHTML = '';
   setState({
-    ...currentSquaresState,
+    ...curState,
     squareCount: 0
   });
-  countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
+  countEl.innerHTML = `Squares: ${curState.squareCount}`;
 }
 
 // We need to make event streams for undo and clear buttons
@@ -169,28 +170,28 @@ const gatherEventStream = (): void => {
   clear$.subscribe(() => clearSVG());
   undo$.subscribe(() => undoLast());
   squaresState.subscribe(state => {
-    currentSquaresState = state;
+    curState = state;
     return renderUi(state);
   });
   mouseEventStream$.subscribe((state: MouseEvent): void => {
     if (state.type === 'start') {
       return setState({
-        ...currentSquaresState,
+        ...curState,
         dragging: true,
         startPoint: { x: state.clientX, y: state.clientY },
         dragType: state.type
       });
     } else if (state.type === 'cancel') {
       return setState({
-        ...currentSquaresState,
+        ...curState,
         dragging: false,
         endPoint: { x: state.clientX, y: state.clientY },
         dragType: state.type,
-        squareCount: currentSquaresState.squareCount + 1
+        squareCount: curState.squareCount + 1
       });
     } else {
       return setState({
-        ...currentSquaresState,
+        ...curState,
         coordinates: { x: state.clientX, y: state.clientY },
         dragType: state.type
       });
