@@ -1,6 +1,7 @@
-import { fromEvent, Observable, BehaviorSubject, merge } from 'rxjs';
+import { fromEvent, Observable, merge } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SquaresState, SvgSelectorConfig } from './interfaces/drag-states.interface'
+import { SquaresState, SvgSelectorConfig } from './interfaces/drag-states.interface';
+import { currentSquaresState, squaresState, setState } from './store/squares.state';
 
 // A few dom elements stored here
 const main: HTMLElement = document.querySelector('#main'),
@@ -14,49 +15,6 @@ let currentSquare;
 let textNodeDimensions;
 let currentTextNodeDimensions;
 
-// We're organizing our initial & current state in an object
-// with the same shape as our data model interface above
-let currentSquaresState: SquaresState = {
-  coordinates: {
-    x: 0,
-    y: 0
-  },
-  dragging: false,
-  startPoint: { x: 0, y: 0 },
-  endPoint: { x: 0, y: 0 },
-  dragType: '',
-  dragDirection: {
-    dragLeft: false,
-    dragUp: false
-  },
-  squareCount: 0
-};
-
-// A BehaviorSubject is used to store the current state.
-// We call `.next()` on this to keep state updated 💥
-const squaresState: BehaviorSubject<SquaresState> = new BehaviorSubject(
-  currentSquaresState
-);
-const setState = (state: SquaresState): void => {
-  return squaresState.next(getState(state));
-}
-const getState = (state: SquaresState): SquaresState => {
-  return {
-    dragging: state.dragging,
-    coordinates: {
-      x: state.coordinates.x,
-      y: state.coordinates.y
-    },
-    startPoint: { x: state.startPoint.x, y: state.startPoint.y },
-    endPoint: { x: state.endPoint.x, y: state.endPoint.y },
-    dragType: state.dragType,
-    dragDirection: {
-      dragLeft: state.startPoint.x > state.coordinates.x || false,
-      dragUp: state.startPoint.y > state.coordinates.y || false
-    },
-    squareCount: state.squareCount
-  };
-}
 // Setting initial counter
 countEl.innerHTML = `Squares: ${currentSquaresState.squareCount}`;
 
